@@ -4,6 +4,17 @@ import sys
 from . import device_info
 from .general import load_module_from_source
 from .logger import Logger
+import syslog
+import SysLogger
+
+# Mapping syslog priorities to SysLogger's priority.
+LOG_PRIORITY_MAP = {
+    syslog.LOG_ERR: 'LOG_ERR',
+    syslog.LOG_WARNING: 'LOG_WARNING',
+    syslog.LOG_NOTICE: 'LOG_NOTICE',
+    syslog.LOG_INFO: 'LOG_INFO',
+    syslog.LOG_DEBUG: 'LOG_DEBUG'
+}
 
 #
 # Constants ====================================================================
@@ -21,6 +32,7 @@ EMPTY_NAMESPACE = ''
 # Helper functions =============================================================
 #
 
+
 def db_connect(db_name, namespace=EMPTY_NAMESPACE):
     from swsscommon import swsscommon
     return swsscommon.DBConnector(db_name, REDIS_TIMEOUT_MSECS, True, namespace)
@@ -32,12 +44,17 @@ def db_connect(db_name, namespace=EMPTY_NAMESPACE):
 
 
 class DaemonBase(Logger):
-    def __init__(self, log_identifier):
-        super(DaemonBase, self).__init__(
-            log_identifier=log_identifier,
-            log_facility=Logger.LOG_FACILITY_DAEMON,
-            log_option=(Logger.LOG_OPTION_NDELAY | Logger.LOG_OPTION_PID)
-        )
+    def __init__(self, log_identifier, use_syslogger=False):
+        super().__init__()
+        self.use_syslogger = use_syslogger
+        if self.use_syslogger:
+            self.logger_instance = SysLogger.SysLogger(log_identifier)
+        else:
+            self.logger_instance = Logger(
+                log_identifier=log_identifier,
+                log_facility=Logger.LOG_FACILITY_DAEMON,
+                log_option=(Logger.LOG_OPTION_NDELAY | Logger.LOG_OPTION_PID)
+            )
 
         # Register our default signal handlers, unless the signal already has a
         # handler registered, most likely from a subclass implementation
@@ -47,6 +64,20 @@ class DaemonBase(Logger):
             signal.signal(signal.SIGINT, self.signal_handler)
         if not signal.getsignal(signal.SIGTERM):
             signal.signal(signal.SIGTERM, self.signal_handler)
+
+    def log(self, priority, msg, also_print_to_console=False):
+        if self._min_log_priority >= priority:
+            if self.use_syslogger:
+                # Using SysLogger.
+                logging_priority = LOG_PRIORITY_MAP.get(priority, 'LOG_INFO')
+                self.logger_instance.log(logging_priority, msg)
+            else:
+                # Send message to syslog
+                self.logger_instance.log(priority, msg)
+
+            # Send message to console
+            if also_print_to_console:
+                print(msg)
 
     # Default signal handler; can be overridden by subclass
     def signal_handler(self, sig, frame):
