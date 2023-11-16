@@ -45,7 +45,7 @@ class SysLogger:
 
     # Convenience methods
     def log_error(self, msg, also_print_to_console=False):
-        self.log(logging.ERROR,, msg, also_print_to_console)
+        self.log(logging.ERROR, msg, also_print_to_console)
 
     def log_warning(self, msg, also_print_to_console=False):
         self.log(logging.WARNING, msg, also_print_to_console)

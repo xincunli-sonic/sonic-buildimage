@@ -1,3 +1,4 @@
+import logging
 import signal
 import sys
 import syslog
@@ -9,11 +10,11 @@ from .syslogger import SysLogger
 
 # Mapping syslog priorities to SysLogger's priority.
 LOG_PRIORITY_MAP = {
-    syslog.LOG_ERR: 'LOG_ERR',
-    syslog.LOG_WARNING: 'LOG_WARNING',
-    syslog.LOG_NOTICE: 'LOG_NOTICE',
-    syslog.LOG_INFO: 'LOG_INFO',
-    syslog.LOG_DEBUG: 'LOG_DEBUG'
+    syslog.LOG_ERR: logging.ERROR,
+    syslog.LOG_WARNING: logging.WARNING,
+    syslog.LOG_NOTICE: logging.INFO,
+    syslog.LOG_INFO: logging.INFO,
+    syslog.LOG_DEBUG: logging.DEBUG
 }
 
 #
@@ -69,7 +70,7 @@ class DaemonBase(Logger):
         if self._min_log_priority >= priority:
             if self.use_syslogger:
                 # Using SysLogger.
-                logging_priority = LOG_PRIORITY_MAP.get(priority, 'LOG_INFO')
+                logging_priority = LOG_PRIORITY_MAP.get(priority, logging.INFO)
                 self.logger_instance.log(logging_priority, msg)
             else:
                 # Send message to syslog
