@@ -5,7 +5,7 @@ import syslog
 from . import device_info
 from .general import load_module_from_source
 from .logger import Logger
-from .SysLogger import SysLogger
+from .syslogger import SysLogger
 
 # Mapping syslog priorities to SysLogger's priority.
 LOG_PRIORITY_MAP = {
@@ -48,7 +48,7 @@ class DaemonBase(Logger):
         super().__init__()
         self.use_syslogger = use_syslogger
         if self.use_syslogger:
-            self.logger_instance = SysLogger.SysLogger(log_identifier)
+            self.logger_instance = SysLogger(log_identifier)
         else:
             self.logger_instance = Logger(
                 log_identifier=log_identifier,

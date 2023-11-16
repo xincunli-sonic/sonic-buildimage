@@ -1,4 +1,5 @@
 import os
+import socket
 import sys
 import logging
 from logging.handlers import SysLogHandler
@@ -28,8 +29,8 @@ class SysLogger:
         # Initialize SysLogger
         self.logger = logging.getLogger(log_identifier)
         self.logger.setLevel(log_level)
-        handler = SysLogHandler(address="/dev/log", facility=log_facility)
-        formatter = logging.Formatter("%(funcName)s.%(name)s: %(message)s")
+        handler = SysLogHandler(address="/dev/log", facility=log_facility, socktype=socket.SOCK_DGRAM)
+        formatter = logging.Formatter("%(name)s: %(message)s")
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
@@ -47,7 +48,7 @@ class SysLogger:
     def log(self, priority, msg, also_print_to_console=False):
         log_level = self.LOG_LEVEL_MAP[priority]
         if log_level >= self._min_log_level:
-            self.logger.log(log_level, msg, exc_info=1)
+            self.logger.log(log_level, msg)
 
         if also_print_to_console:
             print(msg)
