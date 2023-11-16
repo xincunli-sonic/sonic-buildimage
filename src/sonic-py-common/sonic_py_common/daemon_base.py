@@ -5,7 +5,7 @@ import syslog
 from . import device_info
 from .general import load_module_from_source
 from .logger import Logger
-from .syslogger import SysLogger
+from SysLogger import SysLogger
 
 # Mapping syslog priorities to SysLogger's priority.
 LOG_PRIORITY_MAP = {
