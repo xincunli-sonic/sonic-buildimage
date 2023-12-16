@@ -62,11 +62,10 @@ class DaemonBase(Logger):
         if self._min_log_priority >= priority:
             if self.use_syslogger:
                 # Using SysLogger.
-                logging_priority = LOG_PRIORITY_MAP.get(priority, logging.INFO)
-                self.logger_instance.log(logging_priority, msg)
-            else:
-                # Send message to syslog
                 self.logger_instance.log(priority, msg)
+            else:
+                # Using parent Logger class's log method.
+                super().log(priority, msg)
 
             # Send message to console
             if also_print_to_console:
