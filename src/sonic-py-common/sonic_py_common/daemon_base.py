@@ -8,15 +8,6 @@ from .general import load_module_from_source
 from .logger import Logger
 from .syslogger import SysLogger
 
-# Mapping syslog priorities to SysLogger's priority.
-LOG_PRIORITY_MAP = {
-    syslog.LOG_ERR: logging.ERROR,
-    syslog.LOG_WARNING: logging.WARNING,
-    syslog.LOG_NOTICE: logging.INFO,
-    syslog.LOG_INFO: logging.INFO,
-    syslog.LOG_DEBUG: logging.DEBUG
-}
-
 #
 # Constants ====================================================================
 #
@@ -47,15 +38,16 @@ def db_connect(db_name, namespace=EMPTY_NAMESPACE):
 class DaemonBase(Logger):
     def __init__(self, log_identifier, use_syslogger=False):
         super().__init__()
-        self.use_syslogger = use_syslogger
-        if self.use_syslogger:
+        if use_syslogger:
+            super().__init__()
             self.logger_instance = SysLogger(log_identifier)
         else:
-            self.logger_instance = Logger(
+            super().__init__(
                 log_identifier=log_identifier,
                 log_facility=Logger.LOG_FACILITY_DAEMON,
                 log_option=(Logger.LOG_OPTION_NDELAY | Logger.LOG_OPTION_PID)
             )
+        self.use_syslogger = use_syslogger
 
         # Register our default signal handlers, unless the signal already has a
         # handler registered, most likely from a subclass implementation
