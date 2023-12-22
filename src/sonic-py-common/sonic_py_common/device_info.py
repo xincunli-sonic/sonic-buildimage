@@ -860,21 +860,18 @@ def get_num_dpus():
     if not platform:
         return 0
 
-    (platform_path, hwsku_path) = get_paths_to_platform_and_hwsku_dirs()
+    # Get Platform path.
+    platform_path = get_path_to_platform_dir()
 
-    # Check for 'hwsku.json' file presence first
-    hwsku_json_file = os.path.join(hwsku_path, HWSKU_JSON_FILE)
-
-    if os.path.isfile(hwsku_json_file):
-        if os.path.isfile(os.path.join(platform_path, PLATFORM_JSON_FILE)):
-            json_file = os.path.join(platform_path, PLATFORM_JSON_FILE)
-            platform_data = json.loads(open(json_file).read())
-
-            # Convert to lower case avoid case sensitive.
-            data = {k.lower(): v for k, v in platform_data.items()}
-            DPUs = data.get('dpus', None)
-            if DPUs is not None and len(DPUs) > 0:
-                return len(DPUs)
+    if os.path.isfile(os.path.join(platform_path, PLATFORM_JSON_FILE)):
+        json_file = os.path.join(platform_path, PLATFORM_JSON_FILE)
+        platform_data = json.loads(open(json_file).read())
+        
+        # Convert to lower case avoid case sensitive.
+        data = {k.lower(): v for k, v in platform_data.items()}
+        DPUs = data.get('dpus', None)
+        if DPUs is not None and len(DPUs) > 0:
+            return len(DPUs)
 
     return 0
 
