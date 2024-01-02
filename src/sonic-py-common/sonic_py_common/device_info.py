@@ -865,7 +865,13 @@ def get_num_dpus():
 
     if os.path.isfile(os.path.join(platform_path, PLATFORM_JSON_FILE)):
         json_file = os.path.join(platform_path, PLATFORM_JSON_FILE)
-        platform_data = json.loads(open(json_file).read())
+        
+        try:
+            with open(json_file, 'r') as file:
+                platform_data = json.load(file)
+        except (json.JSONDecodeError, IOError, TypeError, ValueError):
+            # Handle any file reading and JSON parsing errors
+            return 0
         
         # Convert to lower case avoid case sensitive.
         data = {k.lower(): v for k, v in platform_data.items()}
