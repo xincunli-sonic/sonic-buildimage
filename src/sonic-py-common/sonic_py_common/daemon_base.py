@@ -39,15 +39,13 @@ class DaemonBase(Logger):
     def __init__(self, log_identifier, use_syslogger=False):
         super().__init__()
         if use_syslogger:
-            super().__init__()
             self.logger_instance = SysLogger(log_identifier)
         else:
-            super().__init__(
+            self.logger_instance = Logger(
                 log_identifier=log_identifier,
                 log_facility=Logger.LOG_FACILITY_DAEMON,
                 log_option=(Logger.LOG_OPTION_NDELAY | Logger.LOG_OPTION_PID)
             )
-        self.use_syslogger = use_syslogger
 
         # Register our default signal handlers, unless the signal already has a
         # handler registered, most likely from a subclass implementation
@@ -58,19 +56,25 @@ class DaemonBase(Logger):
         if not signal.getsignal(signal.SIGTERM):
             signal.signal(signal.SIGTERM, self.signal_handler)
 
-    def log(self, priority, msg, also_print_to_console=False):
-        if self._min_log_priority >= priority:
-            if self.use_syslogger:
-                # Using SysLogger.
-                self.logger_instance.log(priority, msg)
-            else:
-                # Using parent Logger class's log method.
-                super().log(priority, msg)
+    def log(self, priority, message, also_print_to_console=False):
+        self.logger_instance.log(priority, message, also_print_to_console)
 
-            # Send message to console
-            if also_print_to_console:
-                print(msg)
+    def log_error(self, message, also_print_to_console=False):
+        self.logger_instance.log_error(message, also_print_to_console)
 
+    def log_warning(self, message, also_print_to_console=False):
+        self.logger_instance.log_warning(message, also_print_to_console)
+
+    def log_notice(self, message, also_print_to_console=False):
+        self.logger_instance.log_notice(message, also_print_to_console)
+
+    def log_info(self, message, also_print_to_console=False):
+        self.logger_instance.log_info(message, also_print_to_console)
+
+    def log_debug(self, message, also_print_to_console=False):
+        self.logger_instance.log_debug(message, also_print_to_console)
+
+    
     # Default signal handler; can be overridden by subclass
     def signal_handler(self, sig, frame):
         if sig == signal.SIGHUP:
