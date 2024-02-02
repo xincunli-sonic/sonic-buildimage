@@ -36,7 +36,7 @@ def db_connect(db_name, namespace=EMPTY_NAMESPACE):
 
 
 class DaemonBase(Logger):
-    def __init__(self, log_identifier, use_syslogger=False):
+    def __init__(self, log_identifier, use_syslogger=True):
         super().__init__()
         if use_syslogger:
             self.logger_instance = SysLogger(log_identifier)
