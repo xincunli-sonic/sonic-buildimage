@@ -30,7 +30,7 @@ class SysLogger:
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
-        # Set the default minimum log priority to 'LOG_DEBUG'
+        # Set the default minimum log priority to 'LOG_INFO'
         self.set_min_log_priority(logging.INFO)
 
     def set_min_log_priority(self, priority):
