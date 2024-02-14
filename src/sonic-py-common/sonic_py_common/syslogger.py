@@ -25,13 +25,12 @@ class SysLogger:
             self.logger.removeHandler(handler)
 
         # self.logger.setLevel(log_level)
-        handler = SysLogHandler(address="/dev/log", facility=log_facility, socktype=socket.SOCK_DGRAM)
+        handler = SysLogHandler(log_facility=log_facility)
         formatter = logging.Formatter("%(name)s: %(message)s")
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
-        # Set the default minimum log priority to 'LOG_INFO'
-        self.set_min_log_priority(logging.INFO)
+        self.set_min_log_priority(log_level)
 
     def set_min_log_priority(self, priority):
         """
