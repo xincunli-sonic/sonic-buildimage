@@ -25,7 +25,7 @@ class SysLogger:
             self.logger.removeHandler(handler)
 
         # self.logger.setLevel(log_level)
-        handler = SysLogHandler(log_facility=log_facility)
+        handler = SysLogHandler(facility=log_facility)
         formatter = logging.Formatter("%(name)s: %(message)s")
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
