@@ -1,5 +1,4 @@
 import os
-import socket
 import sys
 import logging
 from logging.handlers import SysLogHandler
