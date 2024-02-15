@@ -23,7 +23,6 @@ class SysLogger:
         for handler in self.logger.handlers[:]:
             self.logger.removeHandler(handler)
 
-        # self.logger.setLevel(log_level)
         handler = SysLogHandler(facility=log_facility)
         formatter = logging.Formatter("%(name)s: %(message)s")
         handler.setFormatter(formatter)
@@ -48,16 +47,16 @@ class SysLogger:
 
     # Convenience methods
     def log_error(self, msg, also_print_to_console=False):
-        self.log(logging.ERROR, msg, also_print_to_console)
+        self.log(SysLogHandler.LOG_ERR, msg, also_print_to_console)
 
     def log_warning(self, msg, also_print_to_console=False):
-        self.log(logging.WARN, msg, also_print_to_console)
+        self.log(SysLogHandler.LOG_WARNING, msg, also_print_to_console)
 
     def log_notice(self, msg, also_print_to_console=False):
-        self.log(logging.INFO, msg, also_print_to_console)
+        self.log(SysLogHandler.LOG_NOTICE, msg, also_print_to_console)
 
     def log_info(self, msg, also_print_to_console=False):
-        self.log(logging.INFO, msg, also_print_to_console)
+        self.log(SysLogHandler.LOG_INFO, msg, also_print_to_console)
 
     def log_debug(self, msg, also_print_to_console=False):
-        self.log(logging.DEBUG, msg, also_print_to_console)
+        self.log(SysLogHandler.LOG_DEBUG, msg, also_print_to_console)
