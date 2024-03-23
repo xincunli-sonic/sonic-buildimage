@@ -40,19 +40,13 @@ module sonic-device_metadata {
                     type stypes:hwsku;
                 }
 
-                leaf numVoq {
+                leaf asic_id {
                     type string {
                         length 0..16;
                     }
                 }
 
-                leaf coreId {
-                    type string {
-                        length 0..16;
-                    }
-                }
-
-                leaf corePortId {
+                leaf asic_name {
                     type string {
                         length 0..16;
                     }

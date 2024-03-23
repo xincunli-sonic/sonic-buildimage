@@ -39,13 +39,19 @@ module sonic-port{
 					}
 				}
 
-                leaf asic_id {
+                leaf numVoq {
                     type string {
                         length 0..16;
                     }
                 }
 
-                leaf asic_name {
+                leaf coreId {
+                    type string {
+                        length 0..16;
+                    }
+                }
+
+                leaf corePortId {
                     type string {
                         length 0..16;
                     }
