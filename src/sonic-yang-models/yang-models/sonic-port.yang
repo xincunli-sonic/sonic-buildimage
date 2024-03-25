@@ -39,23 +39,23 @@ module sonic-port{
 					}
 				}
 
-                leaf numVoq {
-                    type string {
-                        length 0..16;
-                    }
-                }
-
-                leaf coreId {
-                    type string {
-                        length 0..16;
-                    }
-                }
-
-                leaf corePortId {
-                    type string {
-                        length 0..16;
-                    }
-                }
+                		leaf numVoq {
+		                    type string {
+		                        length 0..16;
+		                    }
+		                }
+		
+		                leaf coreId {
+		                    type string {
+		                        length 0..16;
+		                    }
+		                }
+		
+		                leaf corePortId {
+		                    type string {
+		                        length 0..16;
+		                    }
+		                }
 
 				leaf alias {
 					type string {
@@ -64,7 +64,7 @@ module sonic-port{
 				}
 
 				leaf lanes {
-                    when "(/dm:sonic-device_metadata/dm:DEVICE_METADATA/dm:localhost/dm:switch_type != 'chassis-packet')";
+                                        when "(/dm:sonic-device_metadata/dm:DEVICE_METADATA/dm:localhost/dm:switch_type != 'chassis-packet')";
 					mandatory true;
 					type string {
 						length 1..128;
