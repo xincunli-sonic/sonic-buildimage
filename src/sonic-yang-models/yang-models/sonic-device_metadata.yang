@@ -46,12 +46,6 @@ module sonic-device_metadata {
                     }
                 }
 
-                leaf asic_name {
-                    type string {
-                        length 0..16;
-                    }
-                }
-
                 leaf default_bgp_status {
                     type enumeration {
                         enum up;
