@@ -1,5 +1,6 @@
 import os
 import sys
+import socket
 import logging
 from logging.handlers import SysLogHandler
 
@@ -10,7 +11,7 @@ class SysLogger:
     """
 
     DEFAULT_LOG_FACILITY = SysLogHandler.LOG_USER
-    DEFAULT_LOG_LEVEL = SysLogHandler.LOG_INFO
+    DEFAULT_LOG_LEVEL = SysLogHandler.LOG_NOTICE
 
     def __init__(self, log_identifier=None, log_facility=DEFAULT_LOG_FACILITY, log_level=DEFAULT_LOG_LEVEL):
         if log_identifier is None:
@@ -23,8 +24,8 @@ class SysLogger:
         for handler in self.logger.handlers[:]:
             self.logger.removeHandler(handler)
 
-        handler = SysLogHandler(facility=log_facility)
-        formatter = logging.Formatter("%(name)s: %(message)s")
+        handler = SysLogHandler(address="/dev/log", facility=log_facility, socktype=socket.SOCK_DGRAM)
+        formatter = logging.Formatter('%(name)s[%(process)d]: %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
