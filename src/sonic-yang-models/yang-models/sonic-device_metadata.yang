@@ -44,8 +44,7 @@ module sonic-device_metadata {
                     type string {
                         length 1..16;
                     }
-                    description "On a VoQ switch, the ASIC Id is used as a identifier in global
-                                 database keys to create a system wide unique key.";
+                    description "asic_id is unique identifier of the asic used by SAI for initialization.";
                 }
 
                 leaf default_bgp_status {
