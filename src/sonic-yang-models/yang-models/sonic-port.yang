@@ -47,7 +47,7 @@ module sonic-port{
 				}
 
 				leaf coreId {
-					description "The ASIC core where the port belongs to";
+					description "The ASIC core where the port belongs to.";
 					type string {
 						length 1..16;
 					}
