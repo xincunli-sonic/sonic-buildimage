@@ -566,9 +566,9 @@
         "PORT": {
             "Ethernet0": {
                 "alias": "Eth1/1",
-                "coreId": "1",
-                "corePortId": "1",
-                "numVoq": "8",
+                "coreid": "1",
+                "coreportid": "1",
+                "numvoq": "8",
                 "lanes": "65",
                 "description": "",
                 "speed": "11100",
@@ -585,9 +585,9 @@
             },
             "Ethernet1": {
                 "alias": "Eth1/2",
-                "coreId": "1",
-                "corePortId": "1",
-                "numVoq": "8",
+                "coreid": "1",
+                "coreportid": "1",
+                "numvoq": "8",
                 "lanes": "66",
                 "description": "",
                 "speed": "11100",
@@ -603,9 +603,9 @@
             },
             "Ethernet2": {
                 "alias": "Eth1/3",
-                "coreId": "1",
-                "corePortId": "1",
-                "numVoq": "8",
+                "coreid": "1",
+                "coreportid": "1",
+                "numvoq": "8",
                 "lanes": "67",
                 "description": "",
                 "speed": "11100",
