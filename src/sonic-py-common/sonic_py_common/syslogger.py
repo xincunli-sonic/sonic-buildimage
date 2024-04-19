@@ -48,16 +48,16 @@ class SysLogger:
 
     # Convenience methods
     def log_error(self, msg, also_print_to_console=False):
-        self.log(SysLogHandler.LOG_ERR, msg, also_print_to_console)
+        self.log(logging.ERROR, msg, also_print_to_console)
 
     def log_warning(self, msg, also_print_to_console=False):
-        self.log(SysLogHandler.LOG_WARNING, msg, also_print_to_console)
+        self.log(logging.WARNING, msg, also_print_to_console)
 
     def log_notice(self, msg, also_print_to_console=False):
-        self.log(SysLogHandler.LOG_NOTICE, msg, also_print_to_console)
+        self.log(logging.INFO, msg, also_print_to_console)
 
     def log_info(self, msg, also_print_to_console=False):
-        self.log(SysLogHandler.LOG_INFO, msg, also_print_to_console)
+        self.log(logging.INFO, msg, also_print_to_console)
 
     def log_debug(self, msg, also_print_to_console=False):
-        self.log(SysLogHandler.LOG_DEBUG, msg, also_print_to_console)
+        self.log(logging.DEBUG, msg, also_print_to_console)
