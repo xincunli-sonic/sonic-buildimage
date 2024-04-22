@@ -1,9 +1,8 @@
+import logging
+from logging.handlers import SysLogHandler
 import os
 import sys
 import socket
-import logging
-from logging.handlers import SysLogHandler
-
 
 class SysLogger:
     """
