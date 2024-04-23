@@ -3,7 +3,6 @@ Description=Database container
 {% if multi_instance == 'true' %}
 Requires=database.service
 After=database.service
-Upholds=process-reboot-cause.service
 {% endif %}
 Wants=database-chassis.service
 After=database-chassis.service
