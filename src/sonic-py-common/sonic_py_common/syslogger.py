@@ -2,7 +2,6 @@ import logging
 from logging.handlers import SysLogHandler
 import os
 import sys
-import socket
 
 class SysLogger:
     """
@@ -23,7 +22,7 @@ class SysLogger:
         for handler in self.logger.handlers[:]:
             self.logger.removeHandler(handler)
 
-        handler = SysLogHandler(address="/dev/log", facility=log_facility, socktype=socket.SOCK_DGRAM)
+        handler = SysLogHandler(address="/dev/log", facility=log_facility)
         formatter = logging.Formatter('%(name)s[%(process)d]: %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
