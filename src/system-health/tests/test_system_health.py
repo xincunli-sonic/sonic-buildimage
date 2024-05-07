@@ -878,8 +878,9 @@ def test_get_service_from_feature_table():
 
 
 @patch('healthd.time.time')
-@patch('healthd.log_notice', side_effect=lambda *args, **kwargs: None)
-def test_healthd_check_interval(mock_log_notice, mock_time):
+@patch('healthd.HealthDaemon.log_notice', side_effect=lambda *args, **kwargs: None)
+@patch('healthd.HealthDaemon.log_warning', side_effect=lambda *args, **kwargs: None)
+def test_healthd_check_interval(mock_log_warning, mock_log_notice, mock_time):
     daemon = HealthDaemon()
     manager = MagicMock()
     manager.check = MagicMock()
@@ -893,6 +894,7 @@ def test_healthd_check_interval(mock_log_notice, mock_time):
     manager.config.interval = 60
     mock_time.side_effect = [0, 3, 0, 61, 0, 1]
     mock_log_notice.side_effect = no_op
+    mock_log_warning.side_effect = no_op
     assert daemon._run_checker(manager, chassis)
     daemon.stop_event.wait.assert_called_with(57)
     assert daemon._run_checker(manager, chassis)
