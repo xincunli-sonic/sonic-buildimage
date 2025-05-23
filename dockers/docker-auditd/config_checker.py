@@ -30,6 +30,7 @@ RULES_HASH_CMD = r"""find {} -type f -name "*.rules" \
 sort | \
 sha1sum""".format(RULES_DIR)
 AUDIT_CONF_HASH_CMD = "cat {} | sha1sum".format(AUDIT_CONF)
+GET_HWSKU_CMD = "sonic-cfggen -d -v DEVICE_METADATA.localhost.hwsku"
 
 
 def run_command(cmd):
@@ -49,16 +50,8 @@ def run_command(cmd):
 
 
 def get_hwsku():
-    try:
-        with open("/etc/sonic/config_db.json") as fp:
-            config_db = json.load(fp)
-        if "DEVICE_METADATA" in config_db and "hwsku" in config_db["DEVICE_METADATA"]["localhost"]:
-            hwsku = str(config_db['DEVICE_METADATA']['localhost']['hwsku'])
-            logger.log_info("Detected HW SKU: {}".format(hwsku))
-            return hwsku
-    except Exception as e:
-        logger.log_error("Failed to get HW SKU: {}".format(str(e)))
-    return None
+    rc, out = run_command(GET_HWSKU_CMD)
+    return out.decode().rstrip('\n') if rc == 0 else None
 
 
 def is_auditd_rules_configured():
