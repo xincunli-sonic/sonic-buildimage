@@ -25,6 +25,7 @@ def find_and_sort_rules_files_with_32bit(base_dir):
     return [base_files[f] for f in sorted_files]
 
 def compute_sha1_cat(files):
+    # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1
     sha1 = hashlib.sha1()
     for file_path in files:
         with open(file_path, 'rb') as f:
