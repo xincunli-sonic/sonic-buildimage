@@ -1578,6 +1578,16 @@
                         "type": "L3"
                     }
                 ]
+            },
+            "sonic-acl:ACL_TABLE_TYPE": {
+                "ACL_TABLE_TYPE_LIST": [
+                    {
+                        "ACL_TABLE_TYPE_NAME": "CUSTOM_L3_TCP",
+                        "MATCHES": ["SRC_IP", "DST_IP", "TCP_FLAGS"],
+                        "ACTIONS": ["PACKET_ACTION"],
+                        "BIND_POINTS": ["PORT"]
+                    }
+                ]
             }
         }
     },
@@ -2232,7 +2242,7 @@
                         "PACKET_ACTION": "FORWARD",
                         "PRIORITY": 100,
                         "RULE_NAME": "Rule_TCPFlags_Valid",
-                        "TCP_FLAGS": "0x12"
+                        "TCP_FLAGS": "0x12/0x12"
                     }
                 ]
             },
