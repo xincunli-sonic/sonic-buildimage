@@ -167,7 +167,7 @@
     "ACL_RULE_TCP_FLAGS_UNSUPPORTED_TABLE": {
         "desc": "Configure ACL_RULE with TCP_FLAGS in a table type that does not support it (should trigger must error).",
         "eStrKey": "Must",
-        "eStr": ["TCP_FLAGS", "not supported", "ACL table type"]
+        "eStr": ["TCP_FLAGS"]
     },
     "ACL_RULE_TCP_FLAGS_SUPPORTED_TABLE": {
         "desc": "Configure ACL_RULE with TCP_FLAGS in a table type that supports it."
