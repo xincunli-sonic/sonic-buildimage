@@ -1582,7 +1582,7 @@
             "sonic-acl:ACL_TABLE_TYPE": {
                 "ACL_TABLE_TYPE_LIST": [
                     {
-                        "ACL_TABLE_TYPE_NAME": "CUSTOM_L3_TCP",
+                        "ACL_TABLE_TYPE_NAME": "L3",
                         "MATCHES": ["SRC_IP", "DST_IP", "TCP_FLAGS"],
                         "ACTIONS": ["PACKET_ACTION"],
                         "BIND_POINTS": ["PORT"]
