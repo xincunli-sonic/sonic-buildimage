@@ -359,8 +359,8 @@
             "FROM_HOST_DACL|RULE_2001": {
                 "PRIORITY": "10",
                 "PACKET_ACTION": "FORWARD",
-                "IP_PROTOCOL": 6,
-                "L4_SRC_PORT": 16500,
+                "IP_PROTOCOL": "6",
+                "L4_SRC_PORT": "16500",
                 "TCP_FLAGS": "0x12/0x12"
             }
         },
