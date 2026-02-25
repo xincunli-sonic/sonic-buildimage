@@ -1154,7 +1154,7 @@
             "FROM_HOST_DACL": {
                 "policy_desc": "Test ACL Table for TCP_FLAGS validation",
                 "stage": "INGRESS",
-                "type": "RNDATA"
+                "type": "CUSTOM_L3_L4_PORT"
             }
         }, 
         "PBH_HASH_FIELD": {
@@ -2825,7 +2825,7 @@
                     "PORTCHANNEL"
                 ]
             },
-            "RNDATA": {
+            "CUSTOM_L3_L4_PORT": {
                 "ACTIONS": [
                     "PACKET_ACTION",
                     "COUNTER"
