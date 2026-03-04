@@ -27,8 +27,9 @@ $(DOCKER_GCU)_PATH = $(DOCKERS_PATH)/$(DOCKER_GCU_STEM)
 # SONIC_GCU_PY3 is declared in rules/sonic-gcu.mk and added to
 # SONIC_PYTHON_WHEELS by that file, which means slave.mk builds it and
 # makes it available as a dependency and as a file to install into the image.
-$(DOCKER_GCU)_DEPENDS += $(SONIC_GCU_PY3)
-$(DOCKER_GCU)_INSTALLS += $(SONIC_GCU_PY3)
+# _PYTHON_WHEELS is the attribute read by slave.mk to populate the Jinja2
+# variable docker_gcu_whls used in dockers/docker-gcu/Dockerfile.j2.
+$(DOCKER_GCU)_PYTHON_WHEELS += $(SONIC_GCU_PY3)
 
 $(DOCKER_GCU)_LOAD_DOCKERS += $(DOCKER_CONFIG_ENGINE_BOOKWORM)
 
@@ -64,5 +65,4 @@ $(DOCKER_GCU)_RUN_OPT += -v /var/run/redis:/var/run/redis:rw
 # needing to expose individual Unix socket paths via complex volume mappings.
 $(DOCKER_GCU)_RUN_OPT += --net=host
 
-# Jinja2 template variable: list of Python wheels to copy into the image
-$(DOCKER_GCU)_WHLS += $(SONIC_GCU_PY3)
+
