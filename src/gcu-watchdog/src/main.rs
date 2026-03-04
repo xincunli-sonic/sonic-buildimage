@@ -34,6 +34,8 @@ use tracing::{error, info};
 use walkdir::WalkDir;
 
 // Signal handling: tokio::signal is included in the "full" feature set.
+// SIGTERM is only available on Unix; on other platforms we only handle Ctrl-C.
+#[cfg(unix)]
 use tokio::signal::unix::{signal, SignalKind};
 
 // Include the tonic-generated gRPC stubs (produced from proto/watchdog.proto
@@ -102,10 +104,13 @@ fn compute_venv_checksum(dir_glob: &str) -> Result<String, String> {
     entries.sort_by(|a, b| a.0.cmp(&b.0));
 
     // Build a combined string and hash it.
-    let combined: String = entries
-        .iter()
-        .map(|(p, h)| format!("{}:{}\n", p, h))
-        .collect();
+    let mut combined = String::with_capacity(entries.len() * 64);
+    for (p, h) in &entries {
+        combined.push_str(p);
+        combined.push(':');
+        combined.push_str(h);
+        combined.push('\n');
+    }
     let dir_hash = format!("{:x}", md5::compute(combined.as_bytes()));
 
     Ok(dir_hash)
@@ -239,8 +244,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("GCU watchdog gRPC server listening on {}", grpc_addr);
 
     // Register a SIGTERM handler so supervisord can stop the process cleanly.
-    // tokio::signal::unix::signal requires the "signal" feature which is
-    // included in tokio's "full" feature set (declared in Cargo.toml).
+    // tokio::signal::unix requires the "signal" feature (included in "full").
+    // Gated to Unix because the API is unavailable on other platforms.
+    #[cfg(unix)]
     let mut sigterm = signal(SignalKind::terminate())
         .expect("Failed to install SIGTERM handler");
 
@@ -248,7 +254,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(WatchdogServiceServer::new(svc))
         .serve(grpc_addr);
 
-    // Run the gRPC server until it completes or until SIGTERM is received.
+    // Run the gRPC server until it completes or until SIGTERM/SIGINT is received.
+    #[cfg(unix)]
     tokio::select! {
         result = server_future => {
             if let Err(e) = result {
@@ -257,6 +264,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         _ = sigterm.recv() => {
             info!("Received SIGTERM, shutting down GCU watchdog gracefully");
+        }
+        _ = tokio::signal::ctrl_c() => {
+            info!("Received SIGINT, shutting down GCU watchdog gracefully");
+        }
+    }
+
+    #[cfg(not(unix))]
+    tokio::select! {
+        result = server_future => {
+            if let Err(e) = result {
+                error!("gRPC server error: {}", e);
+            }
         }
         _ = tokio::signal::ctrl_c() => {
             info!("Received SIGINT, shutting down GCU watchdog gracefully");
