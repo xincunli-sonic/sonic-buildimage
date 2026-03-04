@@ -28,7 +28,6 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use md5::{Digest, Md5};
 use tokio::sync::RwLock;
 use tonic::{transport::Server, Request, Response, Status};
 use tracing::{error, info};
@@ -85,7 +84,7 @@ fn compute_venv_checksum(dir_glob: &str) -> Result<String, String> {
             // MD5 of the individual file's contents
             let bytes = std::fs::read(abs_path)
                 .map_err(|e| format!("Failed to read {}: {}", abs_path.display(), e))?;
-            let file_hash = format!("{:x}", Md5::digest(&bytes));
+            let file_hash = format!("{:x}", md5::compute(&bytes));
 
             // Store path relative to the venv root so the baseline is stable
             // even if the mount point changes.
@@ -107,7 +106,7 @@ fn compute_venv_checksum(dir_glob: &str) -> Result<String, String> {
         .iter()
         .map(|(p, h)| format!("{}:{}\n", p, h))
         .collect();
-    let dir_hash = format!("{:x}", Md5::digest(combined.as_bytes()));
+    let dir_hash = format!("{:x}", md5::compute(combined.as_bytes()));
 
     Ok(dir_hash)
 }
