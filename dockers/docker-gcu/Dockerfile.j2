@@ -25,9 +25,9 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-{% if docker_sonic_gcu_whls.strip() %}
+{% if docker_gcu_whls.strip() %}
 # Copy locally-built sonic-gcu Python wheel and its dependencies
-{{ copy_files("python-wheels/", docker_sonic_gcu_whls.split(' '), "/python-wheels/") }}
+{{ copy_files("python-wheels/", docker_gcu_whls.split(' '), "/python-wheels/") }}
 {% endif %}
 
 # Copy init/health-check script and make it executable
