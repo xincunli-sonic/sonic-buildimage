@@ -1,8 +1,11 @@
-{% from "dockers/dockerfile-macros.j2" import install_debian_packages, install_python_wheels, copy_files %}
-FROM docker-config-engine-bookworm-{{DOCKER_USERNAME}}:{{DOCKER_USERTAG}}
+{% from "dockers/dockerfile-macros.j2" import copy_files, rsync_from_builder_stage %}
+ARG BASE=docker-config-engine-bookworm-{{DOCKER_USERNAME}}:{{DOCKER_USERTAG}}
+
+FROM $BASE AS base
 
 ARG docker_container_name
 ARG image_version
+RUN [ -f /etc/rsyslog.conf ] && sed -ri "s/%syslogtag%/$docker_container_name#%syslogtag%/;" /etc/rsyslog.conf
 
 ## Make apt-get non-interactive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,11 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Pass the image_version to container
 ENV IMAGE_VERSION=$image_version
 
-RUN [ -f /etc/rsyslog.conf ] && sed -ri "s/%syslogtag%/$docker_container_name#%syslogtag%/;" /etc/rsyslog.conf
-
 # Install Python venv support.
-# Note: 'sudo' is intentionally omitted — SONiC containers run as root,
-# so there is no need for sudo inside the container.
 RUN apt-get update && \
     apt-get install -f -y \
         python3-venv && \
@@ -35,4 +34,12 @@ RUN chmod +x /usr/bin/gcu-init.sh
 # Copy supervisord configuration
 COPY ["supervisord.conf", "/etc/supervisor/conf.d/"]
 
+FROM $BASE
+
+{{ rsync_from_builder_stage() }}
+
+# Pass the image_version to container
+ENV IMAGE_VERSION=$image_version
+
+ENV DEBIAN_FRONTEND=noninteractive
 ENTRYPOINT ["/usr/local/bin/supervisord"]
