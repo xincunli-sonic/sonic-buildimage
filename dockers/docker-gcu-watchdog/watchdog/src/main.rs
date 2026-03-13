@@ -4,7 +4,7 @@ use std::path::Path;
 
 // Check GCU venv integrity
 fn check_gcu_status() -> String {
-    let venv_path = Path::new("/opt/gcu-venv");
+    let venv_path = Path::new("/opt/sonic/gcu/venv");
     if !venv_path.exists() {
         return format!("ERROR: GCU venv not found at {}", venv_path.display());
     }

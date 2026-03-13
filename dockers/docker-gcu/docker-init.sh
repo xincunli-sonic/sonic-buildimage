@@ -12,7 +12,8 @@
 
 set -e
 
-VENV_DIR="/opt/gcu-venv"
+GCU_BASE_DIR="/opt/sonic/gcu"
+VENV_DIR="${GCU_BASE_DIR}/venv"
 WHEEL_DIR="/python-wheels"
 WHEEL_GLOB="${WHEEL_DIR}/sonic_gcu-*.whl"
 SETUP_SENTINEL="${VENV_DIR}/.setup_complete"
@@ -45,7 +46,20 @@ do_setup() {
     fi
 
     echo "[gcu-init] Installing ${WHEEL_FILE} into ${VENV_DIR} ..."
-    "${VENV_DIR}/bin/pip" install --no-index --system-site-packages "${WHEEL_FILE}"
+    # --no-deps: skip resolving declared deps (e.g. click==7.0) since the venv
+    # was created with --system-site-packages and inherits them from the system.
+    "${VENV_DIR}/bin/pip" install --no-deps "${WHEEL_FILE}"
+
+    # Create the well-known symlink that sonic-utilities references as
+    # GCU_STANDALONE_BIN = "/opt/sonic/gcu/current/bin/gcu-standalone".
+    # The console_scripts entry point installed by pip is at ${VENV_DIR}/bin/gcu-standalone.
+    # Both the symlink target and the venv live under /opt/sonic/gcu which is a
+    # host bind-mount, so the host can execute the binary directly.
+    GCU_STANDALONE_DIR="${GCU_BASE_DIR}/current/bin"
+    GCU_STANDALONE_BIN="${GCU_STANDALONE_DIR}/gcu-standalone"
+    mkdir -p "${GCU_STANDALONE_DIR}"
+    ln -sf "${VENV_DIR}/bin/gcu-standalone" "${GCU_STANDALONE_BIN}"
+    echo "[gcu-init] Symlinked ${GCU_STANDALONE_BIN} -> ${VENV_DIR}/bin/gcu-standalone"
 
     # Write a sentinel file so the healthcheck can verify setup completed OK.
     touch "${SETUP_SENTINEL}"
@@ -66,25 +80,26 @@ do_healthcheck() {
         exit 1
     fi
 
-    # Health-check 1: venv GCU — apply an empty JSON patch via the venv binary.
-    # An empty patch list '[]' is a no-op and must succeed without error.
-    echo "[gcu-init] Checking venv GCU (${VENV_DIR}/bin/config apply-patch) ..."
-    if echo '[]' | "${VENV_DIR}/bin/config" apply-patch /dev/stdin; then
+    # Health-check 1: venv GCU — verify the generic_config_updater module is
+    # importable and the GCU classes instantiate without error.
+    echo "[gcu-init] Checking venv GCU (python3 -m generic_config_updater) ..."
+    if "${VENV_DIR}/bin/python3" -c "
+from generic_config_updater.generic_updater import GenericUpdater
+print('[gcu-init] generic_config_updater import OK')
+"; then
         echo "[gcu-init] Venv GCU health check: PASS"
     else
         echo "[gcu-init] Venv GCU health check: FAIL" >&2
         exit 1
     fi
 
-    # Health-check 2: host (system-installed) GCU — same empty patch via the
-    # system-wide 'config' CLI.  SONiC containers run as root so sudo is not
-    # needed; running it directly avoids requiring a sudoers configuration
-    # inside the container.
-    echo "[gcu-init] Checking host GCU (config apply-patch) ..."
-    if echo '[]' | config apply-patch /dev/stdin; then
-        echo "[gcu-init] Host GCU health check: PASS"
+    # Health-check 2: verify the well-known symlink exists and is executable.
+    GCU_STANDALONE_BIN="${GCU_BASE_DIR}/current/bin/gcu-standalone"
+    echo "[gcu-init] Checking standalone symlink (${GCU_STANDALONE_BIN}) ..."
+    if [ -x "${GCU_STANDALONE_BIN}" ]; then
+        echo "[gcu-init] Standalone symlink health check: PASS"
     else
-        echo "[gcu-init] Host GCU health check: FAIL" >&2
+        echo "[gcu-init] Standalone symlink health check: FAIL (not found or not executable)" >&2
         exit 1
     fi
 

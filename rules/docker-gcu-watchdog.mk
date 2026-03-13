@@ -29,6 +29,6 @@ $(DOCKER_GCU_WATCHDOG)_CONTAINER_NAME = gcu-watchdog
 $(DOCKER_GCU_WATCHDOG)_PACKAGE_NAME   = gcu-watchdog
 $(DOCKER_GCU_WATCHDOG)_RUN_OPT += -t --pid=host
 $(DOCKER_GCU_WATCHDOG)_RUN_OPT += -v /etc/localtime:/etc/localtime:ro
-# Mount the GCU named volume read-only — must match the volume name used by
-# docker-gcu so both containers see the same venv filesystem.
-$(DOCKER_GCU_WATCHDOG)_RUN_OPT += -v gcu-venv:/opt/gcu-venv:ro
+# Mount /opt/sonic/gcu from the host read-only — same bind-mount used by
+# docker-gcu so the watchdog can see the venv at /opt/sonic/gcu/venv.
+$(DOCKER_GCU_WATCHDOG)_RUN_OPT += -v /opt/sonic/gcu:/opt/sonic/gcu:ro
