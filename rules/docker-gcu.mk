@@ -57,10 +57,12 @@ $(DOCKER_GCU)_CONTAINER_NAME = gcu
 $(DOCKER_GCU)_RUN_OPT += -t
 $(DOCKER_GCU)_RUN_OPT += -v /etc/sonic:/etc/sonic:ro
 $(DOCKER_GCU)_RUN_OPT += -v /etc/localtime:/etc/localtime:ro
-# Use a named Docker volume so the GCU venv is shared with docker-gcu-watchdog.
-# A named volume (not a host bind-mount) survives container restarts and is
-# managed by the Docker daemon — both containers can mount it independently.
-$(DOCKER_GCU)_RUN_OPT += -v gcu-venv:/opt/gcu-venv
+# Bind-mount /opt/sonic/gcu from the host so the venv and the gcu-standalone
+# symlink are visible on the host filesystem. sonic-utilities references
+# GCU_STANDALONE_BIN = "/opt/sonic/gcu/current/bin/gcu-standalone" and needs
+# to execute it directly from the host. docker-gcu-watchdog mounts the same
+# path to monitor the venv.
+$(DOCKER_GCU)_RUN_OPT += -v /opt/sonic/gcu:/opt/sonic/gcu
 # Redis socket for CONFIG_DB access (config apply-patch connects via Unix socket)
 $(DOCKER_GCU)_RUN_OPT += -v /var/run/redis:/var/run/redis:rw
 # Share the host network namespace so the container can reach Redis without
