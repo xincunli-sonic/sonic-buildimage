@@ -25,8 +25,8 @@ endif
 
 # Container name uses hyphen (kebab-case) to match SONiC naming convention;
 # the Rust binary uses underscore (snake_case) internally.
-$(DOCKER_GCU_WATCHDOG)_CONTAINER_NAME = gcu-watchdog
-$(DOCKER_GCU_WATCHDOG)_PACKAGE_NAME   = gcu-watchdog
+$(DOCKER_GCU_WATCHDOG)_CONTAINER_NAME = gcu_watchdog
+$(DOCKER_GCU_WATCHDOG)_PACKAGE_NAME   = gcu_watchdog
 $(DOCKER_GCU_WATCHDOG)_RUN_OPT += -t --pid=host
 $(DOCKER_GCU_WATCHDOG)_RUN_OPT += -v /etc/localtime:/etc/localtime:ro
 # Mount /opt/sonic/gcu from the host read-only — same bind-mount used by

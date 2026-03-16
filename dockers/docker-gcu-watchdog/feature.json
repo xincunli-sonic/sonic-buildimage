@@ -1,5 +1,5 @@
 {
-    "name": "gcu-watchdog",
+    "name": "gcu_watchdog",
     "has_per_asic_scope": false,
     "has_global_scope": true,
     "auto_restart": "enabled",
